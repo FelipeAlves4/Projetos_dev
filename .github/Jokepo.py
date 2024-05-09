@@ -1,4 +1,5 @@
 from random import randint
+from time import sleep 
 itens = ("Pedra", "Papel", "Tesoura")
 comp = randint(0, 2)
 print("""Sua opçãos 
@@ -6,9 +7,13 @@ print("""Sua opçãos
       [1] Papel
       [2] Tesoura""")
 jogador = int(input("Qual sua jogada? "))
+sleep(1)
 print("JO")
+sleep(1)
 print("KE")
+sleep(1)
 print("PO!!!")
+sleep(1)
 print("-="* 12)
 print(f"Computador jogou {itens[comp]}")
 print(f"Jogador jogou {itens[jogador]}")
