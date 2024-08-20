@@ -3,11 +3,18 @@ import random
 
 def main(page: ft.Page):
     # Configurações da página
-    page.title = "Jogo de Adivinhação"
+    page.title = "Desafio do Código: Humano vs Máquina"
     page.theme_mode = ft.ThemeMode.DARK
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.padding = 20
+
+    # Fundo gradiente
+    page.bgcolor = ft.LinearGradient(
+        colors=[ft.colors.DEEP_PURPLE, ft.colors.INDIGO, ft.colors.BLUE],
+        begin=ft.alignment.top_left,
+        end=ft.alignment.bottom_right,
+    )
 
     # Variáveis globais
     target_number = random.randint(0, 100)
@@ -19,10 +26,21 @@ def main(page: ft.Page):
         sorted_ranking = sorted(ranking, key=lambda x: x['attempts'])
         ranking_container.controls.clear()
         for i, player in enumerate(sorted_ranking):
-            player_text = ft.Text(f"{i + 1}. {player['name']} - {player['attempts']} tentativas", size=16)
+            player_text = ft.Text(f"{i + 1}. {player['name']} - {player['attempts']} tentativas",
+                                  size=16,
+                                  weight=ft.FontWeight.BOLD,
+                                  color=ft.colors.WHITE)
             if player['name'] == player_name.value:
-                player_text.color = ft.colors.GREEN
-            ranking_container.controls.append(ft.Container(content=player_text, padding=5, animate=ft.Animation(600, ft.AnimationCurve.EASE_IN_OUT)))
+                player_text.color = ft.colors.LIME_ACCENT
+            ranking_container.controls.append(
+                ft.Container(
+                    content=player_text,
+                    padding=5,
+                    border_radius=ft.border_radius.all(10),
+                    bgcolor=ft.colors.TRANSPARENT,
+                    animate=ft.Animation(600, ft.AnimationCurve.EASE_IN_OUT)
+                )
+            )
         page.update()
 
     # Função para submeter o palpite
@@ -39,6 +57,7 @@ def main(page: ft.Page):
         
         if user_guess == target_number:
             result_text.value = "Parabéns! Você acertou!"
+            result_text.color = ft.colors.LIME_ACCENT
             target_number = random.randint(0, 100)  # Gera novo número
 
             # Verifica se o jogador já está no ranking
@@ -55,19 +74,31 @@ def main(page: ft.Page):
             user_attempts = 0
         elif user_guess < target_number:
             result_text.value = "Seu chute foi menor que o número alvo."
+            result_text.color = ft.colors.AMBER
         else:
             result_text.value = "Seu chute foi maior que o número alvo."
+            result_text.color = ft.colors.RED_ACCENT
 
         attempts_text.value = f"Tentativas: {user_attempts}"
         input_box.value = ""  # Limpa a caixa de entrada
         update_ranking()
 
     # Elementos da interface
-    player_name = ft.TextField(label="Nome do Jogador", width=300)
-    input_box = ft.TextField(label="Chute um número entre 0 e 100", width=300)
-    submit_button = ft.ElevatedButton(text="Enviar", on_click=guess_number, width=150, bgcolor=ft.colors.BLUE, color=ft.colors.WHITE)
-    result_text = ft.Text(size=20, color=ft.colors.ORANGE)
-    attempts_text = ft.Text(f"Tentativas: {user_attempts}", size=18, color=ft.colors.YELLOW)
+    player_name = ft.TextField(label="Nome do Jogador", width=300, color=ft.colors.WHITE)
+    input_box = ft.TextField(label="Chute um número entre 0 e 100", width=300, color=ft.colors.WHITE)
+    submit_button = ft.ElevatedButton(
+        text="Enviar",
+        on_click=guess_number,
+        width=150,
+        style=ft.ButtonStyle(
+            shape=ft.RoundedRectangleBorder(radius=12),
+            bgcolor=ft.colors.BLUE_GREY,
+            color=ft.colors.WHITE,
+            elevation=10,
+        )
+    )
+    result_text = ft.Text(size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE)
+    attempts_text = ft.Text(f"Tentativas: {user_attempts}", size=18, color=ft.colors.WHITE)
     ranking_title = ft.Text("Ranking", size=24, weight=ft.FontWeight.BOLD, color=ft.colors.CYAN)
     ranking_container = ft.Column()
 
@@ -75,7 +106,11 @@ def main(page: ft.Page):
     page.add(
         ft.Column(
             [
-                ft.Container(content=ft.Text("Jogo de Adivinhação", size=30, weight=ft.FontWeight.BOLD, color=ft.colors.CYAN), padding=20),
+                ft.Container(
+                    content=ft.Text("Desafio do Código: Humano vs Máquina", size=30, weight=ft.FontWeight.BOLD, color=ft.colors.LIME_ACCENT),
+                    padding=20,
+                    alignment=ft.alignment.center
+                ),
                 player_name,
                 input_box,
                 submit_button,
