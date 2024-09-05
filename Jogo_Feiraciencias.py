@@ -52,7 +52,7 @@ def main(page: ft.Page):
     init_db()
 
     # Variáveis globais
-    global input_box, result_text, attempts_text, ranking_text, target_number, user_attempts, name_field
+    global input_box, result_text, attempts_text, ranking_listview, target_number, user_attempts, name_field
     target_number = random.randint(0, 100)
     user_attempts = 0
 
@@ -68,7 +68,7 @@ def main(page: ft.Page):
     name_field = ft.TextField(
         label="Nome do Jogador", 
         width=300, 
-        text_style=ft.TextStyle(color=ft.colors.WHITE)  # Cor branca para o texto
+        text_style=ft.TextStyle(color=ft.colors.WHITE)
     )
 
     # Caixa de entrada para o chute do número
@@ -76,7 +76,7 @@ def main(page: ft.Page):
         label="Chute um número entre 0 e 100",
         width=300,
         keyboard_type=ft.KeyboardType.NUMBER,
-        text_style=ft.TextStyle(color=ft.colors.WHITE)  # Cor branca para o texto
+        text_style=ft.TextStyle(color=ft.colors.WHITE)
     )
 
     # Mensagem de resultado
@@ -96,17 +96,16 @@ def main(page: ft.Page):
         text_align=ft.TextAlign.CENTER
     )
 
-    # Texto para mostrar o ranking
-    ranking_text = ft.Text(
-        value="Ranking",
-        color="#00CED1",
-        size=24,
-        weight="bold",
-        text_align=ft.TextAlign.CENTER
+    # Lista de ranking com rolagem
+    ranking_listview = ft.ListView(
+        height=300,
+        width=400,
+        padding=10,
+        spacing=10,
+        auto_scroll=False
     )
 
     # Função para processar o chute
-   # Função para processar o chute
     def guess_number(e):
         global user_attempts, target_number  # Define as variáveis como globais
 
@@ -141,7 +140,36 @@ def main(page: ft.Page):
     # Função para atualizar o ranking
     def update_ranking():
         ranking = get_ranking()
-        ranking_text.value = "Ranking\n" + "\n".join([f"{nome}: {tentativas} tentativas" for nome, tentativas in ranking])
+        ranking_listview.controls.clear()
+
+        for idx, (nome, tentativas) in enumerate(ranking):
+            # Estilo para o ranking
+            rank_container = ft.Container(
+                content=ft.Row(
+                    controls=[
+                        ft.Text(f"{idx + 1}º", size=20, color=ft.colors.LIME_ACCENT),
+                        ft.Text(f"{nome}: {tentativas} tentativas", size=18, color=ft.colors.WHITE)
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ),
+                bgcolor=ft.colors.BLUE_GREY_900,
+                padding=ft.padding.all(10),
+                border_radius=ft.border_radius.all(10),
+                gradient=ft.LinearGradient(
+                    begin=ft.alignment.top_left,
+                    end=ft.alignment.bottom_right,
+                    colors=[ft.colors.CYAN_400, ft.colors.INDIGO_900]
+                ),
+                shadow=ft.BoxShadow(
+                    spread_radius=1,
+                    blur_radius=8,
+                    color=ft.colors.BLACK12,
+                    offset=ft.Offset(2, 2)
+                ),
+                alignment=ft.alignment.center,
+            )
+            ranking_listview.controls.append(rank_container)
+        page.update()
 
     # Botão de enviar
     submit_button = ft.ElevatedButton(
@@ -157,7 +185,8 @@ def main(page: ft.Page):
         submit_button,
         result_text,
         attempts_text,
-        ranking_text
+        ft.Text("Ranking:", color="#00CED1", size=24, weight="bold", text_align=ft.TextAlign.CENTER),
+        ranking_listview
     )
 
     # Atualiza o ranking na primeira execução
