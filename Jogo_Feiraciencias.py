@@ -1,6 +1,7 @@
 import flet as ft
 import random
 import sqlite3
+import time
 
 # Configuração do banco de dados
 def init_db():
@@ -119,11 +120,16 @@ def main(page: ft.Page):
         user_attempts += 1
 
         if user_guess == target_number:
-            result_text.value = "Parabéns! Você acertou!"
+            result_text.value = f"Parabéns! Você acertou com {user_guess} tentativas!"
+            #time.sleep(5)
             result_text.color = ft.colors.LIME_ACCENT
             insert_score(name_field.value, user_attempts)  # Insere no ranking
             target_number = random.randint(0, 100)  # Gera novo número
             user_attempts = 0
+            #update_ranking()VERIFICAR SE ESSA FUNÇÃO ESTARÁ DENTRO DO IF.
+            #time.sleep(5) TIME SLEEP PARA PARAR EM SEGUNDOS
+            #result_text.value = "Insira um número acima, entre 0 e 100."
+            #name_field.value ="" LIMPAR A CAIXA DO NOME.
         elif user_guess < target_number:
             result_text.value = "Seu chute foi menor que o número alvo."
             result_text.color = ft.colors.AMBER
